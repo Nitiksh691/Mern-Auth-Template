@@ -4,23 +4,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../store/authStore';
 
 const ResetPassword = () => {
-  const [formData, setFormData] = useState({
-    password: '',
-    confirmPassword: '',
-  });
-  
+  const [formData, setFormData] = useState({ password: '', confirmPassword: '' });
   const { resetPassword, isLoading, error, clearError } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Get email from previous page state
   const email = location.state?.email;
 
-  // Redirect if no email provided
   useEffect(() => {
-    if (!email) {
-      navigate('/forgot-password');
-    }
+    if (!email) navigate('/forgot-password');
   }, [email, navigate]);
 
   const handleChange = (e) => {
@@ -30,102 +21,63 @@ const ResetPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      alert('Password must be at least 6 characters long');
-      return;
-    }
-    
+    if (formData.password !== formData.confirmPassword) return alert('Passwords do not match');
+    if (formData.password.length < 6) return alert('Password must be at least 6 characters long');
     const result = await resetPassword(email, formData.password);
-    
-    if (result.success) {
-      // Navigate to login after successful password reset
-      navigate('/login');
-    }
+    if (result.success) navigate('/login');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-black p-4">
+      <div className="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-lg p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Reset Password</h2>
-          <p className="text-gray-600 mt-2">
-            Enter your new password below
-          </p>
-          {email && (
-            <p className="text-sm text-gray-500 mt-1">
-              For account: {email}
-            </p>
-          )}
+          <h2 className="text-2xl font-light text-white mb-2">Reset Password</h2>
+          <p className="text-zinc-400 text-sm">Enter your new password</p>
+          {email && <p className="text-xs text-zinc-500 mt-1">For account: {email}</p>}
         </div>
 
-        {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
-          </div>
+          <div className="bg-red-950 border border-red-800 text-red-300 px-4 py-3 rounded mb-6 text-sm">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* New Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              New Password
-            </label>
+            <label className="block text-sm text-zinc-300 mb-2">New Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-black border border-zinc-700 rounded text-white placeholder-zinc-500 focus:border-white focus:outline-none transition-colors"
               placeholder="Enter new password"
             />
           </div>
 
-          {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm New Password
-            </label>
+            <label className="block text-sm text-zinc-300 mb-2">Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-black border border-zinc-700 rounded text-white placeholder-zinc-500 focus:border-white focus:outline-none transition-colors"
               placeholder="Confirm new password"
             />
           </div>
 
-          {/* Password Requirements */}
-          <div className="text-xs text-gray-500">
-            Password must be at least 6 characters long
-          </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full bg-white text-black py-3 px-4 rounded font-medium hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? 'Resetting Password...' : 'Reset Password'}
+            {isLoading ? 'Resetting...' : 'Reset Password'}
           </button>
         </form>
 
-        {/* Back to Login Link */}
         <div className="mt-6 text-center">
-          <button 
-            onClick={() => navigate('/login')}
-            className="text-sm text-blue-600 hover:text-blue-700"
-          >
+          <button onClick={() => navigate('/login')} className="text-sm text-zinc-400 hover:text-white transition-colors">
             Back to Login
           </button>
         </div>
@@ -133,5 +85,4 @@ const ResetPassword = () => {
     </div>
   );
 };
-
 export default ResetPassword;

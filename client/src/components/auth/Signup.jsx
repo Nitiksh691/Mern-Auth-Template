@@ -11,7 +11,6 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
   });
-
   const { signup, isLoading, error, clearError } = useAuthStore();
   const navigate = useNavigate();
 
@@ -22,140 +21,64 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      alert('Password must be at least 6 characters long');
-      return;
-    }
-
-    // Remove confirmPassword before sending to backend
+    if (formData.password !== formData.confirmPassword) return alert('Passwords do not match');
+    if (formData.password.length < 6) return alert('Password must be at least 6 characters long');
     const { confirmPassword, ...submitData } = formData;
-    
-    // Call Zustand signup function
     const result = await signup(submitData);
-    
-    if (result.success) {
-      navigate('/dashboard'); // Redirect on success
-    }
+    if (result.success) navigate('/dashboard');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+    <div className="min-h-screen flex items-center justify-center bg-black p-4">
+      <div className="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-lg p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-          <p className="text-gray-600 mt-2">Sign up to get started</p>
+          <h2 className="text-2xl font-light text-white mb-2">Create Account</h2>
+          <p className="text-zinc-400 text-sm">Sign up to get started</p>
         </div>
 
-        {/* Error Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {error}
-          </div>
+          <div className="bg-red-950 border border-red-800 text-red-300 px-4 py-3 rounded mb-6 text-sm">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Full Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your full name"
-            />
-          </div>
+          {['name', 'userName', 'email', 'password', 'confirmPassword'].map((field) => (
+            <div key={field}>
+              <label className="block text-sm text-zinc-300 mb-2">
+                {field === 'name'
+                  ? 'Full Name'
+                  : field === 'userName'
+                  ? 'Username'
+                  : field === 'email'
+                  ? 'Email Address'
+                  : field === 'password'
+                  ? 'Password'
+                  : 'Confirm Password'}
+              </label>
+              <input
+                type={field.includes('password') ? 'password' : field === 'email' ? 'email' : 'text'}
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-black border border-zinc-700 rounded text-white placeholder-zinc-500 focus:border-white focus:outline-none transition-colors"
+                placeholder={`Enter your ${field}`}
+              />
+            </div>
+          ))}
 
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              name="userName"
-              value={formData.userName}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Choose a username"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter your email"
-            />
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Create a password"
-            />
-          </div>
-
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Confirm your password"
-            />
-          </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-6"
+            className="w-full bg-white text-black py-3 px-4 rounded font-medium hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-6"
           >
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+            {isLoading ? 'Creating...' : 'Create Account'}
           </button>
         </form>
 
-        {/* Link to Login */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-zinc-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link to="/login" className="text-white hover:text-zinc-300 transition-colors">
               Sign In
             </Link>
           </p>
@@ -164,5 +87,4 @@ const Signup = () => {
     </div>
   );
 };
-
 export default Signup;
